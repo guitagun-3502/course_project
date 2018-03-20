@@ -34,6 +34,7 @@
 				arraySaved = JSON.parse(localStorage.getItem(key));
 				$('#login').val('');
 				$('#password').val('');
+				$('#country').attr('disabled', true);
 			}
 		});
 		
@@ -88,6 +89,7 @@
 		
 		$('#show-all').click( function(){
 			$('.news-bar').empty();
+			$('#country').attr('disabled', false);
 			for (var i = 0; i < arraySources.length; i++){
 				if (arraySaved.indexOf(i) != -1){
 					console.log(arraySaved);
@@ -109,6 +111,60 @@
 									  ${arraySources[i].url}</a>
 									  <input type="checkbox" id="${i}" class="saved-news">`;
 					$('.news-bar').append(newsText);
+				}
+			}
+			
+		});
+		
+		$('#country').change(function(){
+			$('.news-bar').empty();
+			if ($('#country').val() === ''){
+				for (var i = 0; i < arraySources.length; i++){
+					if (arraySaved.indexOf(i) != -1){
+						
+						var newsText = document.createElement('div');
+					
+						newsText.innerHTML = `<img src="close.png"><b>"${arrayName[i]}":</b> <br>
+										  ${arraySources[i].description} <br><br>
+										  <a href='${arraySources[i].url}' target="_blank">
+										  ${arraySources[i].url}</a>
+										  <input type="checkbox" id="${i}" checked class="saved-news">`;
+						$('.news-bar').append(newsText);
+					}else{
+						var newsText = document.createElement('div');
+					
+						newsText.innerHTML = `<img src="close.png"><b>"${arrayName[i]}":</b> <br>
+										  ${arraySources[i].description} <br><br>
+										  <a href='${arraySources[i].url}' target="_blank">
+										  ${arraySources[i].url}</a>
+										  <input type="checkbox" id="${i}" class="saved-news">`;
+						$('.news-bar').append(newsText);
+					}
+				}
+			}else{
+				for (var i = 0; i < arraySources.length; i++){
+					if (arraySources[i].country === $('#country').val()){
+						if (arraySaved.indexOf(i) != -1){
+							
+							var newsText = document.createElement('div');
+						
+							newsText.innerHTML = `<img src="close.png"><b>"${arrayName[i]}":</b> <br>
+											  ${arraySources[i].description} <br><br>
+											  <a href='${arraySources[i].url}' target="_blank">
+											  ${arraySources[i].url}</a>
+											  <input type="checkbox" id="${i}" checked class="saved-news">`;
+							$('.news-bar').append(newsText);
+						}else{
+							var newsText = document.createElement('div');
+						
+							newsText.innerHTML = `<img src="close.png"><b>"${arrayName[i]}":</b> <br>
+											  ${arraySources[i].description} <br><br>
+											  <a href='${arraySources[i].url}' target="_blank">
+											  ${arraySources[i].url}</a>
+											  <input type="checkbox" id="${i}" class="saved-news">`;
+							$('.news-bar').append(newsText);
+						}
+					}
 				}
 			}
 		});
@@ -154,6 +210,7 @@
 	var arraySources = [];
 	var arrayName = [];
 	var arraySaved = [];
+	var arrayCountry = [];
 	var arrayTags = [];
 	
 	
@@ -254,11 +311,15 @@
 		for (var i = 0,len = sources.length;i < len; i++){
 			arraySources[i] = sources[i];
 			arrayName[i] = sources[i].name;
+			if (arrayCountry.indexOf(sources[i].country) === -1){
+				arrayCountry.push(sources[i].country);
+			}
 		}
 	}
 	
 	
 	find.addEventListener('click', function(){
+		$('#country').attr('disabled', true);
 		$('.news-bar').empty();
 		if (input.value !== ''){
 			if (arrayTags.indexOf(input.value) === -1){
@@ -310,7 +371,11 @@
 		delay: 0
 	});
 	
-	
+	$('#country').autocomplete({
+		source: arrayCountry,
+		minLength: 0,
+		delay: 0
+	});
 	
 	
 	
