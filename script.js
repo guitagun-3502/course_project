@@ -24,14 +24,15 @@
     	});
 		
 		$('#sign-in').click( function(e){
+			$('#error').html('');
 			if ($('#registration').attr('data-status') === 'on'){
 				$('#registration').attr('data-status', 'off');
 				$('#check-pass').remove();
 				$('#login').val('');
 				$('#password').val('');
 			}else{
+				checkStatus(arraySaved,arraySources);
 				validEmailPassword();
-				arraySaved = JSON.parse(localStorage.getItem(key));
 				$('#login').val('');
 				$('#password').val('');
 				$('#country').attr('disabled', true);
@@ -39,6 +40,7 @@
 		});
 		
 		$('#registration').click( function(e){
+			$('#error').html('');
 			var statusRegistrationButton = $('#registration').attr('data-status');
 			if (statusRegistrationButton === 'off'){
 				var div = document.createElement('div');
@@ -79,9 +81,25 @@
 					if ((e.target.value === 'on') && !(e.target.id in arraySaved)){
 						e.target.value = 'off';
 						arraySaved.push(e.target.id);
+						localStorage.setItem(key,JSON.stringify(arraySaved));
 					}else{
 						e.target.value = 'on';
 						arraySaved.remove(e.target.id);
+						localStorage.setItem(key,JSON.stringify(arraySaved));
+					}
+				}else{
+					if ((e.target.tagName === 'BUTTON') && (arraySaved.indexOf(e.target.id) === -1) && ($('#modal')[0].innerText === 'Logout')){
+						arraySources[e.target.id].status = 'delete';
+						$(`#${e.target.id}`)[0].innerText = 'delete';
+						arraySaved.push(e.target.id);
+						localStorage.setItem(key,JSON.stringify(arraySaved));
+					}else{
+						if ((e.target.tagName === 'BUTTON') && (arraySaved.indexOf(e.target.id) !== -1) && ($('#modal')[0].innerText === 'Logout')){
+							arraySources[e.target.id].status = 'save';
+							$(`#${e.target.id}`)[0].innerText = 'save';
+							arraySaved.splice(arraySaved.indexOf(e.target.id), 1);
+							localStorage.setItem(key,JSON.stringify(arraySaved));
+						}
 					}
 				}
 			}
@@ -90,37 +108,24 @@
 		$('#show-all').click( function(){
 			$('.news-bar').empty();
 			$('#country').attr('disabled', false);
+			checkStatus(arraySaved,arraySources);
 			for (var i = 0; i < arraySources.length; i++){
-				if (arraySaved.indexOf(i) != -1){
-					console.log(arraySaved);
-					
 					var newsText = document.createElement('div');
 				
-					newsText.innerHTML = `<img src="close.png"><b>"${arrayName[i]}":</b> <br>
+					newsText.innerHTML = `<b>"${arrayName[i]}":</b> <br>
 									  ${arraySources[i].description} <br><br>
 									  <a href='${arraySources[i].url}' target="_blank">
 									  ${arraySources[i].url}</a>
-									  <input type="checkbox" id="${i}" checked class="saved-news">`;
+									  <button id="${i}" class="saved-news">${arraySources[i].status}</button>`;
 					$('.news-bar').append(newsText);
-				}else{
-					var newsText = document.createElement('div');
-				
-					newsText.innerHTML = `<img src="close.png"><b>"${arrayName[i]}":</b> <br>
-									  ${arraySources[i].description} <br><br>
-									  <a href='${arraySources[i].url}' target="_blank">
-									  ${arraySources[i].url}</a>
-									  <input type="checkbox" id="${i}" class="saved-news">`;
-					$('.news-bar').append(newsText);
-				}
 			}
-			
+			console.log(arraySaved);
 		});
 		
 		$('#country').change(function(){
 			$('.news-bar').empty();
 			if ($('#country').val() === ''){
 				for (var i = 0; i < arraySources.length; i++){
-					if (arraySaved.indexOf(i) != -1){
 						
 						var newsText = document.createElement('div');
 					
@@ -128,42 +133,20 @@
 										  ${arraySources[i].description} <br><br>
 										  <a href='${arraySources[i].url}' target="_blank">
 										  ${arraySources[i].url}</a>
-										  <input type="checkbox" id="${i}" checked class="saved-news">`;
+										  <button id="${i}" class="saved-news">${arraySources[i].status}</button>`;
 						$('.news-bar').append(newsText);
-					}else{
-						var newsText = document.createElement('div');
-					
-						newsText.innerHTML = `<img src="close.png"><b>"${arrayName[i]}":</b> <br>
-										  ${arraySources[i].description} <br><br>
-										  <a href='${arraySources[i].url}' target="_blank">
-										  ${arraySources[i].url}</a>
-										  <input type="checkbox" id="${i}" class="saved-news">`;
-						$('.news-bar').append(newsText);
-					}
 				}
 			}else{
 				for (var i = 0; i < arraySources.length; i++){
-					if (arraySources[i].country === $('#country').val()){
-						if (arraySaved.indexOf(i) != -1){
-							
+					if (arraySources[i].country === $('#country').val()){		
 							var newsText = document.createElement('div');
 						
 							newsText.innerHTML = `<img src="close.png"><b>"${arrayName[i]}":</b> <br>
 											  ${arraySources[i].description} <br><br>
 											  <a href='${arraySources[i].url}' target="_blank">
 											  ${arraySources[i].url}</a>
-											  <input type="checkbox" id="${i}" checked class="saved-news">`;
+											  <button id="${i}" class="saved-news">${arraySources[i].status}</button>`;
 							$('.news-bar').append(newsText);
-						}else{
-							var newsText = document.createElement('div');
-						
-							newsText.innerHTML = `<img src="close.png"><b>"${arrayName[i]}":</b> <br>
-											  ${arraySources[i].description} <br><br>
-											  <a href='${arraySources[i].url}' target="_blank">
-											  ${arraySources[i].url}</a>
-											  <input type="checkbox" id="${i}" class="saved-news">`;
-							$('.news-bar').append(newsText);
-						}
 					}
 				}
 			}
@@ -171,38 +154,14 @@
 
 		
 		$('#saved').click( function(){
-			arraySaved = JSON.parse(localStorage.getItem(key));
+			$('#country').attr('disabled', true);
+			checkStatus(arraySaved,arraySources);
 			renderSaved(arraySaved);
-		});
-		
-		$('#save').click( function(){
-			if ($('.news-bar > div').size() > 1){
-				arraySaved = [];
-				for (var i = 0; i < arraySources.length; i++){
-					if ($(`#${i}`).is(':checked')){
-						arraySaved.push(i);
-					}
-				}
-			}else{
-				for (var i = 0; i < arraySources.length; i++){
-					if (($(`#${i}`).is(':checked')) && (arraySaved.indexOf(i) === -1)){
-						arraySaved.push(i);	
-					}
-				}
-			}
-			localStorage.setItem(key,JSON.stringify(arraySaved));
+			console.log(arraySaved);
 		});
 		
 	});
 	
-	var login = document.getElementById('login');
-	var password = document.getElementById('password');
-	var sign = document.getElementsByClassName('sign')[0];
-	var input = document.getElementById('input-tag');
-	var find = document.getElementById('find');
-	var removeTags = document.getElementById('remove');
-	var tags = document.getElementsByClassName('tags')[0];
-	var signIn = document.getElementById('sign-in');
 	var API_KEY = '6dc2f16f1c6245c8ac3b8a6815dc9044';
 	var sourcesUrl = 'https://newsapi.org/v2/sources?apiKey=' + API_KEY;
 	var key;
@@ -231,13 +190,35 @@
 			var newsText = document.createElement('div');
 			newsText.innerHTML = `<img src="close.png"><b>"${arraySources[array[i]].name}":</b> <br>
 								  ${arraySources[array[i]].description} <br><br>
-								  <a href='${array[i].url}' target="_blank">
+								  <a href='${arraySources[array[i]].url}' target="_blank">
 								  ${arraySources[array[i]].url}</a>
-								  <input type="checkbox" id="${array[i]}" checked class="saved-news">`;
+								  <button id="${array[i]}" class="saved-news">${arraySources[array[i]].status}</button>`;
 			$('.news-bar').append(newsText);
 		}
 		
 	}
+	
+	function checkStatus(arraySav, arraySour){
+		arraySaved = JSON.parse(localStorage.getItem(key));
+		if (arraySav.length !== 0){
+			for (var i = 0; i < arraySour.length; i++){
+				for (var j = 0; j < arraySav.length; j++){
+					if (arraySav[j] == i){
+						arraySour[i].status = 'delete';
+						break;
+					}else{
+						arraySour[i].status = 'save';
+					}
+				}
+			}
+		}else{
+			for (var i = 0; i < arraySour.length; i++){
+				arraySour[i].status = 'save';
+			}
+		}
+	}
+	
+	
 	
 	function validEmailPassword(){
 		
@@ -245,26 +226,26 @@
 		var rePass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).*$/i;
 		var text;
 		
-		if ((reEmail.test(login.value)) && (rePass.test(password.value)) && ($('#password-check').val() === $('#password').val() || $('#registration').attr('data-status', 'off'))){
-			if ((localStorage.getItem(login.value) === null) && ($('#registration').attr('data-status') === 'on'))	{
-				console.log(arraySaved);
-				localStorage.setItem(login.value,JSON.stringify(arraySaved));
+		if ((reEmail.test($('#login').val())) && (rePass.test($('#password').val())) && ($('#password-check').val() === $('#password').val() || $('#registration').attr('data-status', 'off'))){
+			if ((localStorage.getItem($('#login').val()) === null) && ($('#registration').attr('data-status') === 'on'))	{
+				localStorage.setItem($('#login').val(),JSON.stringify(arraySaved));
 				text = 'Registration complete! Sign in please!';
 			}else{
-				if ((localStorage.getItem(login.value) !== null) && ($('#registration').attr('data-status') === 'off')){
+				if ((localStorage.getItem($('#login').val()) !== null) && ($('#registration').attr('data-status') === 'off')){
 					$('#modal-window').animate({opacity: 0,}, 200, function(){ 
             			$(this).css('display', 'none');
             		    $('#overlay').fadeOut(400);
             		});
 					text = '';
-					savedArray = JSON.parse(localStorage.getItem(login.value));
-					key = login.value;
+					arraySaved = JSON.parse(localStorage.getItem($('#login').val()));
+					checkStatus(arraySaved,arraySources);
+					key = $('#login').val();
 					console.log(key);
 					$('#modal')[0].innerText = 'Logout';
 					$('#saved').css('display', 'flex');
 					$('.header-bar').append('<div class="header-buttons" id="saved">Saved</div>');
 				}else{
-					if ((localStorage.getItem(login.value) !== null) && ($('#registration').attr('data-status') === 'on')){
+					if ((localStorage.getItem($('#login').val()) !== null) && ($('#registration').attr('data-status') === 'on')){
 						text = 'User exists!'
 					}else{
 						text = 'User absent!';
@@ -272,13 +253,13 @@
 				}
 			}
 		}else{
-			if ((!reEmail.test(login.value)) && (!rePass.test(password.value))) {
+			if ((!reEmail.test($('#login').val())) && (!rePass.test($('#password').val()))) {
 				text = 'Invalid Email and Password!';
 			}else{
-				if(!reEmail.test(login.value)){
+				if(!reEmail.test($('#login').val())){
 					text = 'Invalid Email!';
 				}else{
-					if (!rePass.test(password.value)){
+					if (!rePass.test($('#password').val())){
 						text = 'Invalid Password!';
 					}
 					else{
@@ -287,8 +268,7 @@
 				}
 			}
 		}
-		var error = document.getElementById('error');
-		error.innerHTML = text;
+		$('#error').html(text);
 	}
 	
 	
@@ -315,53 +295,60 @@
 				arrayCountry.push(sources[i].country);
 			}
 		}
+		checkStatus(arraySaved,arraySources);
 	}
 	
 	
-	find.addEventListener('click', function(){
+	$('#input-tag').change(function(){
 		$('#country').attr('disabled', true);
 		$('.news-bar').empty();
-		if (input.value !== ''){
-			if (arrayTags.indexOf(input.value) === -1){
-				arrayTags.push(input.value);
+		if ($('#input-tag').val() !== ''){
+			if ((arrayTags.indexOf($('#input-tag').val()) === -1) && (arrayName.indexOf($('#input-tag').val()) !== -1)){
+				arrayTags.push($('#input-tag').val());
 				var div = document.createElement('div');
 				var span = document.createElement('span');
 				var img = document.createElement('img');
 			
 				img.src = 'icon.png';
 				div.className = 'tag';
-				span.innerHTML = `${input.value}`;
+				span.innerHTML = `${$('#input-tag').val()}`;
 			
 				div.appendChild(span);
 				div.appendChild(img);
-				tags.appendChild(div);
+				$('.tags').append(div);
 			}
 			
-			if (arrayName.indexOf(input.value) !== -1 ){
+			if (arrayName.indexOf($('#input-tag').val()) !== -1 ){
 				var newsText = document.createElement('div');
-				newsText.innerHTML = `<img src="close.png"><b>"${input.value}":</b> <br>
-									  ${arraySources[arrayName.indexOf(input.value)].description} <br><br>
-									  <a href='${arraySources[arrayName.indexOf(input.value)].url}' target="_blank">
-									  ${arraySources[arrayName.indexOf(input.value)].url}</a>
-									  <input type="checkbox" id="${arrayName.indexOf(input.value)}" class="saved-news">`;
+				newsText.innerHTML = `<img src="close.png"><b>"${$('#input-tag').val()}":</b> <br>
+									  ${arraySources[arrayName.indexOf($('#input-tag').val())].description} <br><br>
+									  <a href='${arraySources[arrayName.indexOf($('#input-tag').val())].url}' target="_blank">
+									  ${arraySources[arrayName.indexOf($('#input-tag').val())].url}</a>
+									  <button id="${arrayName.indexOf($('#input-tag').val())}" class="saved-news">${arraySources[arrayName.indexOf($('#input-tag').val())].status}</button>`;
 				$('.news-bar').append(newsText);
-				input.value = '';
+				$('#input-tag').val('');
 			}
 
 		}
+		return true;
 	});
 	
-	removeTags.addEventListener('click',function(){
-		tags.innerHTML = '';
-		arrayTags = [];
-	})
-	
-	tags.addEventListener('click', function(e){
+	$('.tags').click( function(e){
 		if (e.target.tagName === 'SPAN'){
-			input.value = e.target.innerHTML;
+			$('#input-tag').val($(e.target).html());
+			$('.news-bar').empty();
+			var newsText = document.createElement('div');
+				newsText.innerHTML = `<img src="close.png"><b>"${$('#input-tag').val()}":</b> <br>
+									  ${arraySources[arrayName.indexOf($('#input-tag').val())].description} <br><br>
+									  <a href='${arraySources[arrayName.indexOf($('#input-tag').val())].url}' target="_blank">
+									  ${arraySources[arrayName.indexOf($('#input-tag').val())].url}</a>
+									  <button id="${arrayName.indexOf($('#input-tag').val())}" class="saved-news">${arraySources[arrayName.indexOf($('#input-tag').val())].status}</button>`;
+				$('.news-bar').append(newsText);
 		}else{
-			if (e.target.tagName === 'IMG')
-				tags.removeChild(e.target.parentNode);
+			if (e.target.tagName === 'IMG'){
+				$(e.target).parent().remove();
+				arrayTags.splice(arrayTags.indexOf($($(e.target).parent().children()[0]).html()), 1);
+			}
 		}
 	});
 	
@@ -376,7 +363,5 @@
 		minLength: 0,
 		delay: 0
 	});
-	
-	
 	
 })();
