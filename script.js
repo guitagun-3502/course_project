@@ -129,7 +129,7 @@
 						
 						var newsText = document.createElement('div');
 					
-						newsText.innerHTML = `<img src="close.png"><b>"${arrayName[i]}":</b> <br>
+						newsText.innerHTML = `<b>"${arrayName[i]}":</b> <br>
 										  ${arraySources[i].description} <br><br>
 										  <a href='${arraySources[i].url}' target="_blank">
 										  ${arraySources[i].url}</a>
@@ -141,7 +141,7 @@
 					if (arraySources[i].country === $('#country').val()){		
 							var newsText = document.createElement('div');
 						
-							newsText.innerHTML = `<img src="close.png"><b>"${arrayName[i]}":</b> <br>
+							newsText.innerHTML = `<b>"${arrayName[i]}":</b> <br>
 											  ${arraySources[i].description} <br><br>
 											  <a href='${arraySources[i].url}' target="_blank">
 											  ${arraySources[i].url}</a>
@@ -188,7 +188,7 @@
 		
 		for (var i = 0; i < array.length; i++){
 			var newsText = document.createElement('div');
-			newsText.innerHTML = `<img src="close.png"><b>"${arraySources[array[i]].name}":</b> <br>
+			newsText.innerHTML = `<b>"${arraySources[array[i]].name}":</b> <br>
 								  ${arraySources[array[i]].description} <br><br>
 								  <a href='${arraySources[array[i]].url}' target="_blank">
 								  ${arraySources[array[i]].url}</a>
@@ -320,7 +320,7 @@
 			
 			if (arrayName.indexOf($('#input-tag').val()) !== -1 ){
 				var newsText = document.createElement('div');
-				newsText.innerHTML = `<img src="close.png"><b>"${$('#input-tag').val()}":</b> <br>
+				newsText.innerHTML = `<b>"${$('#input-tag').val()}":</b> <br>
 									  ${arraySources[arrayName.indexOf($('#input-tag').val())].description} <br><br>
 									  <a href='${arraySources[arrayName.indexOf($('#input-tag').val())].url}' target="_blank">
 									  ${arraySources[arrayName.indexOf($('#input-tag').val())].url}</a>
@@ -338,7 +338,7 @@
 			$('#input-tag').val($(e.target).html());
 			$('.news-bar').empty();
 			var newsText = document.createElement('div');
-				newsText.innerHTML = `<img src="close.png"><b>"${$('#input-tag').val()}":</b> <br>
+				newsText.innerHTML = `<b>"${$('#input-tag').val()}":</b> <br>
 									  ${arraySources[arrayName.indexOf($('#input-tag').val())].description} <br><br>
 									  <a href='${arraySources[arrayName.indexOf($('#input-tag').val())].url}' target="_blank">
 									  ${arraySources[arrayName.indexOf($('#input-tag').val())].url}</a>
