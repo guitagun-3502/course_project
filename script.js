@@ -271,8 +271,6 @@
 		$('#error').html(text);
 	}
 	
-	
-	
 	var sourcesXhr = new XMLHttpRequest();
 	
 	sourcesXhr.open('GET', sourcesUrl);
@@ -296,8 +294,7 @@
 			}
 		}
 		checkStatus(arraySaved,arraySources);
-	}
-	
+	}	
 	
 	$('#input-tag').change(function(){
 		$('#country').attr('disabled', true);
@@ -363,5 +360,4 @@
 		minLength: 0,
 		delay: 0
 	});
-	
 })();
