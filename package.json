@@ -1,0 +1,25 @@
+{
+  "name": "course-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "jquery.js",
+  "dependencies": {
+    "jquery.js": "^0.0.2-security"
+  },
+  "devDependencies": {
+    "tokenizer.js": "~1.0.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guitagun-3502/course_project.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/guitagun-3502/course_project/issues"
+  },
+  "homepage": "https://github.com/guitagun-3502/course_project#readme"
+}
