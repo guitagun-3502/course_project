@@ -218,8 +218,6 @@
 		}
 	}
 	
-	
-	
 	function validEmailPassword(){
 		
 		var reEmail = /^[\w-\.]+@[\w-]+\.[a-z]{2,4}$/i;
