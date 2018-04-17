@@ -4,11 +4,10 @@
   "description": "",
   "main": "jquery.js",
   "dependencies": {
-    "jquery.js": "^0.0.2-security"
+    "jquery.js": "^0.0.2-security",
+	"tokenizer.js": "~1.0.0"
   },
-  "devDependencies": {
-    "tokenizer.js": "~1.0.0"
-  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
